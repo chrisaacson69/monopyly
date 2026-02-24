@@ -1,6 +1,8 @@
 import os
-import imp
+import importlib
+import importlib.util
 import inspect
+import sys
 
 
 def _find_derived_classes(package, base_class):
@@ -32,6 +34,24 @@ def _find_derived_classes(package, base_class):
     return results
 
 
+def _load_package(package_name, package_folder):
+    '''
+    Loads a package from a folder path (replacement for imp.load_package).
+    '''
+    init_path = os.path.join(package_folder, "__init__.py")
+    if not os.path.exists(init_path):
+        return None
+    spec = importlib.util.spec_from_file_location(
+        package_name, init_path,
+        submodule_search_locations=[os.path.abspath(package_folder)])
+    if spec is None:
+        return None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[package_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def load_ais():
     '''
     Finds packages containing AIs from the root->AIs folder and returns
@@ -47,7 +67,9 @@ def load_ais():
     for ai_folder in ai_folders:
         # We load each package...
         package_folder = "AIs/" + ai_folder
-        ai_package = imp.load_package(ai_folder, package_folder)
+        ai_package = _load_package(ai_folder, package_folder)
+        if ai_package is None:
+            continue
 
         # We find the classes they expose that are derived from the
         # base AI class...

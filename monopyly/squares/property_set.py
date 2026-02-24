@@ -37,6 +37,12 @@ class PropertySet(object):
         '''
         return self.set_enum
 
+    def __format__(self, format_spec):
+        '''
+        Supports format strings.
+        '''
+        return format(self.set_enum, format_spec)
+
     def add_property(self, property):
         '''
         Adds a property to the set.
