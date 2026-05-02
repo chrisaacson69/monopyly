@@ -12,3 +12,6 @@ __pycache__/
 
 # Bot-generated save state (empty placeholder files)
 *.dat
+
+# Large analysis result files (regeneratable)
+*_results.json
