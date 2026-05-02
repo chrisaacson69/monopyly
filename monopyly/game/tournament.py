@@ -50,10 +50,12 @@ class Tournament(object):
             max_players_per_game,
             number_of_rounds,
             maximum_games,
-            permutations_or_combinations):
+            permutations_or_combinations,
+            eminent_domain=True):
         '''
         The 'constructor'
         '''
+        self.eminent_domain = eminent_domain
         # We hold a list of _PlayerInfo objects - one for each plater...
         self.player_infos = dict()
         number_of_player_ais = len(player_ais)
@@ -87,7 +89,8 @@ class Tournament(object):
 
         # The maximum number of games to play per round...
         player_number_variations = max_players_per_game - min_players_per_game + 1
-        variations = number_of_rounds * 2 * player_number_variations
+        ed_variants = 2 if self.eminent_domain else 1
+        variations = number_of_rounds * ed_variants * player_number_variations
         self.max_games_per_round = int(maximum_games / variations)
 
         # The number of games played...
@@ -113,8 +116,9 @@ class Tournament(object):
 
             # We play one round with each number of plays in the range specified...
             for number_of_players in range(self.min_players_per_game, self.max_players_per_game+1):
-                # We play one round with the eminent-domain rule and one without...
-                self._play_round(number_of_players, True)
+                # We play with eminent-domain on+off (default) or off-only...
+                if self.eminent_domain:
+                    self._play_round(number_of_players, True)
                 self._play_round(number_of_players, False)
             Logger.dedent()
 

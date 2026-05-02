@@ -219,7 +219,7 @@ class Game(object):
         self._check_for_bankrupt_players()
 
         # We check if the player ran out of time this turn...
-        if current_player.state.ai_processing_seconds_remaining <= 0.0:
+        if current_player.state.ai_processing_seconds_remaining <= 0.0 and current_player in self.state.players:
             self._player_ran_out_of_time(current_player)
 
         Logger.dedent()
@@ -1129,9 +1129,9 @@ class Game(object):
         # We notify all the players...
         maximum_rounds_played = (self.number_of_rounds_played == self.maximum_rounds)
         for player in self.state.players:
-            player.ai.game_over(self.winner, maximum_rounds_played)
+            player.call_ai(player.ai.game_over, self.winner, maximum_rounds_played)
         for player in self.state.bankrupt_players:
-            player.ai.game_over(self.winner, maximum_rounds_played)
+            player.call_ai(player.ai.game_over, self.winner, maximum_rounds_played)
 
     def _check_eminent_domain_rule(self):
         '''

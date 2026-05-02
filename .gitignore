@@ -5,3 +5,10 @@
 obj
 bin
 /gui/Monopyly/Monopyly.csproj.user
+
+# Python bytecode (covers all AI subfolders)
+__pycache__/
+*.pyc
+
+# Bot-generated save state (empty placeholder files)
+*.dat
